@@ -153,73 +153,12 @@ export async function generateStructuredJson(
     }
     if (prompt.includes('provided policy snippets')) {
       const msgMatch = prompt.match(/USER_MESSAGE:\s*([^\n\r]+)/);
-      const userMsg = msgMatch && msgMatch[1] ? msgMatch[1].toLowerCase() : '';
+      const userMsg = msgMatch && msgMatch[1] ? msgMatch[1] : '';
 
-      let reply =
-        'Welcome to Stadium SmartGuide! I can assist you with wayfinding, accessibility elevators, hydration point locations, and venue policies.';
-      let deepLink: { type: string; target_id: string } | null = null;
-
-      if (
-        userMsg.includes('wheelchair') ||
-        userMsg.includes('access') ||
-        userMsg.includes('elevator') ||
-        userMsg.includes('lift')
-      ) {
-        reply =
-          'Wheelchair-accessible seating is available in all tiers. Accessible elevators are marked on the Live Map in gold.';
-        deepLink = { type: 'highlight-amenity', target_id: 'Accessible' };
-      } else if (
-        userMsg.includes('restroom') ||
-        userMsg.includes('bathroom') ||
-        userMsg.includes('toilet') ||
-        userMsg.includes('washroom')
-      ) {
-        reply =
-          'The nearest restrooms are located near Concourse N, Gate 3, and Concourse S. Restroom 04 is currently 6 minutes away.';
-        deepLink = { type: 'highlight-amenity', target_id: 'Restrooms' };
-      } else if (
-        userMsg.includes('water') ||
-        userMsg.includes('bottle') ||
-        userMsg.includes('drink') ||
-        userMsg.includes('hydration')
-      ) {
-        reply =
-          'Refillable empty water bottles are allowed inside the stadium. There are 12 hydration points located around Concourse L1.';
-        deepLink = { type: 'highlight-amenity', target_id: 'Food & Drinks' };
-      } else if (
-        userMsg.includes('bag') ||
-        userMsg.includes('prohibit') ||
-        userMsg.includes('size') ||
-        userMsg.includes('camera')
-      ) {
-        reply =
-          'Bags larger than 30cm x 30cm and professional cameras are prohibited. Large items can be stored at the Gate 3 bag check facility.';
-      } else if (
-        userMsg.includes('food') ||
-        userMsg.includes('eat') ||
-        userMsg.includes('concession') ||
-        userMsg.includes('wait') ||
-        userMsg.includes('queue') ||
-        userMsg.includes('line')
-      ) {
-        reply =
-          'Concession stands are located near Concourse S and Concourse N. Concession 02 has moderate crowd wait times (about 85% capacity). Live wait times are listed dynamically in the Queue Tracker.';
-        deepLink = { type: 'highlight-amenity', target_id: 'Food & Drinks' };
-      } else if (
-        userMsg.includes('lost') ||
-        userMsg.includes('found') ||
-        userMsg.includes('item')
-      ) {
-        reply =
-          'Lost and Found claims can be submitted at the Info Desk on Concourse L1. You can also check claims online.';
-        deepLink = { type: 'highlight-amenity', target_id: 'Info Desk' };
-      }
-
-      return JSON.stringify({
-        response_text: reply,
-        language: 'en',
-        deep_link_action: deepLink,
-      });
+      const { generateMockAssistantReply } =
+        await import('./mockAssistantReplies');
+      const reply = generateMockAssistantReply(userMsg);
+      return JSON.stringify(reply);
     }
     if (prompt.includes('exceeding 80% capacity')) {
       return JSON.stringify({

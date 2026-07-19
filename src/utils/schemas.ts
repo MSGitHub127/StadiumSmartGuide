@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 export const WayfindingRequestSchema = z.object({
-  originZoneId: z.string().min(1),
-  destinationAmenityId: z.string().min(1),
+  originZoneId: z.string().min(1).max(60),
+  destinationAmenityId: z.string().min(1).max(60),
   accessibilityRequired: z.boolean(),
 });
 
 export const AssistantRequestSchema = z.object({
-  userMessage: z.string().trim().min(1),
-  detectedLanguage: z.string().trim().min(1),
+  userMessage: z.string().trim().min(1).max(1000),
+  detectedLanguage: z.string().trim().min(1).max(10),
 });
 
 export const WayfindingResultSchema = z.object({

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import {
   MapPin,
@@ -34,7 +34,7 @@ import {
 import LiveMap from '@/components/LiveMap';
 import ChatConcierge from '@/components/ChatConcierge';
 import QueueTracker from '@/components/QueueTracker';
-import type { SensorRecord } from '@/utils/csvParser';
+import { useSensorPolling } from '@/hooks/useSensorPolling';
 
 type MobileTab = 'map' | 'settings' | 'assistant';
 
@@ -71,7 +71,8 @@ export default function FanDashboard(): JSX.Element {
   const [routing, setRouting] = useState(false);
   const [routeError, setRouteError] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<MobileTab>('map');
-  const [sensors, setSensors] = useState<SensorRecord[]>([]);
+  const { sensors: polledSensors } = useSensorPolling();
+  const sensors = polledSensors ?? [];
   const [showNotifications, setShowNotifications] = useState(false);
   const [modal, setModal] = useState<{
     isOpen: boolean;
@@ -105,13 +106,7 @@ export default function FanDashboard(): JSX.Element {
     });
   };
 
-  // Fetch sensors on load to compute dynamic ETA stats
-  useEffect(() => {
-    fetch('/api/crowd-analytics')
-      .then((res) => res.json())
-      .then((data) => setSensors(data.sensors ?? []))
-      .catch(() => {});
-  }, []);
+  // Sensors are now provided by useSensorPolling (Zustand store, 15s interval)
 
   async function handleFindRoute(): Promise<void> {
     setRouting(true);
@@ -618,11 +613,25 @@ export default function FanDashboard(): JSX.Element {
       {/* Dashboard Panels */}
       <div className="p-4 flex-1 overflow-hidden flex flex-col min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 min-h-0">
-          <div className="md:col-span-1 h-full min-h-0">{ControlSidebar}</div>
-          <div className="md:col-span-2 h-full min-h-0">
+          <div
+            className={`md:col-span-1 h-full min-h-0 ${
+              mobileTab === 'settings' ? 'block' : 'hidden md:block'
+            }`}
+          >
+            {ControlSidebar}
+          </div>
+          <div
+            className={`md:col-span-2 h-full min-h-0 ${
+              mobileTab === 'map' ? 'block' : 'hidden md:block'
+            }`}
+          >
             <LiveMap activePath={activePath} />
           </div>
-          <div className="md:col-span-1 flex flex-col gap-4 h-full min-h-0">
+          <div
+            className={`md:col-span-1 flex flex-col gap-4 h-full min-h-0 ${
+              mobileTab === 'assistant' ? 'flex' : 'hidden md:flex'
+            }`}
+          >
             <div className="flex-1 min-h-0">
               <ChatConcierge />
             </div>

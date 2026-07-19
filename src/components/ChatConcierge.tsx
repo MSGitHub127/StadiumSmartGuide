@@ -64,7 +64,10 @@ export default function ChatConcierge(): JSX.Element {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userMessage: trimmed,
-          detectedLanguage: 'auto',
+          detectedLanguage:
+            typeof navigator !== 'undefined'
+              ? (navigator.language?.split('-')[0] ?? 'auto')
+              : 'auto',
         }),
       });
 
@@ -81,6 +84,15 @@ export default function ChatConcierge(): JSX.Element {
         time: timeNow(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+
+      // Deep-link: highlight amenity on LiveMap when assistant mentions one
+      if (data.deep_link_action?.type === 'highlight-amenity') {
+        window.dispatchEvent(
+          new CustomEvent('highlight-amenity', {
+            detail: { type: data.deep_link_action.target_id },
+          })
+        );
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
