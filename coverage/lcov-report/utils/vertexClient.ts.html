@@ -489,7 +489,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -530,6 +529,7 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -789,8 +789,7 @@ function mockWayfindingResponse(prompt: string): string {
 &nbsp;
   const originVal =
     originMatch &amp;&amp; originMatch[1] ? originMatch[1] : <span class="branch-1 cbranch-no" title="branch not covered" >'ZONE-GATE-3';</span>
-  const destVal =
-    destMatch &amp;&amp; destMatch[1] ? destMatch[1] : <span class="branch-1 cbranch-no" title="branch not covered" >'AMN-RESTROOM-04';</span>
+  const destVal = destMatch &amp;&amp; destMatch[1] ? destMatch[1] : <span class="branch-1 cbranch-no" title="branch not covered" >'AMN-RESTROOM-04';</span>
   const accessibilityRequired = accessMatch?.[1] === 'true';
 &nbsp;
   let avoidZones: string[] = [];
@@ -830,7 +829,8 @@ function mockWayfindingResponse(prompt: string): string {
   const safePath = bfsPath(congestionAdjacency, startNode, endNode);
 &nbsp;
   const computed = safePath ?? <span class="branch-1 cbranch-no" title="branch not covered" >directPath;</span>
-  const rerouted = safePath !== null &amp;&amp; safePath.join('&gt;') !== directPath.join('&gt;');
+  const rerouted =
+    safePath !== null &amp;&amp; safePath.join('&gt;') !== directPath.join('&gt;');
 &nbsp;
   const originLabel = originVal.replace('ZONE-', '').replace('AMN-', '');
   const destLabel = destVal.replace('ZONE-', '').replace('AMN-', '');
@@ -973,7 +973,7 @@ export async function generateStructuredJson(
         rel="noopener noreferrer"
         >istanbul</a
       >
-      at 2026-07-19T18:13:44.058Z
+      at 2026-07-19T18:18:38.230Z
     </div>
     <script src="../prettify.js"></script>
     <script>

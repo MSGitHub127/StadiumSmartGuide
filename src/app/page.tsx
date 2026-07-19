@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
   MapPin,
@@ -97,6 +97,19 @@ export default function FanDashboard(): JSX.Element {
       onConfirm,
     });
   };
+
+  useEffect(() => {
+    const handleSystemAlert = (e: Event) => {
+      const customEvent = e as CustomEvent<{ message: string }>;
+      if (customEvent.detail?.message) {
+        showAlert(customEvent.detail.message);
+      }
+    };
+    window.addEventListener('show-system-alert', handleSystemAlert);
+    return () => {
+      window.removeEventListener('show-system-alert', handleSystemAlert);
+    };
+  }, []);
 
   // Sensors are now provided by useSensorPolling (Zustand store, 15s interval)
 

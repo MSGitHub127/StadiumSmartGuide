@@ -32,6 +32,24 @@ const SIDEBAR_ITEMS = [
  * destination pages exist, so the UI never promises navigation it can't do.
  */
 export default function Sidebar(): JSX.Element {
+  const handleClick = (label: string) => {
+    if (label === 'Map') {
+      // Highlight Map: clear any highlighted amenity filters to show full view
+      window.dispatchEvent(
+        new CustomEvent('highlight-amenity', {
+          detail: { type: null },
+        })
+      );
+    } else {
+      // General Coming Soon Alert
+      window.dispatchEvent(
+        new CustomEvent('show-system-alert', {
+          detail: { message: `${label} module is coming soon!` },
+        })
+      );
+    }
+  };
+
   return (
     <aside className="w-64 hidden lg:flex flex-col gap-6 p-5 border-r border-slate-800/40 bg-slate-950/20">
       <div className="flex items-center gap-3 px-1">
@@ -63,25 +81,24 @@ export default function Sidebar(): JSX.Element {
               </button>
             );
           }
-          // Not a real button: these destinations don't exist yet, so they're
-          // rendered as inert placeholders rather than controls that look
-          // clickable but perform no action for mouse, keyboard, or screen-
-          // reader users alike.
           return (
-            <div
+            <button
               key={item.label}
-              aria-hidden="true"
+              onClick={() => handleClick(item.label)}
               title={`${item.label} — coming soon`}
-              className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 border border-transparent cursor-not-allowed select-none"
+              className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 transition-all border border-transparent cursor-pointer"
             >
               <Icon className="h-5 w-5" />
               {item.label}
-            </div>
+            </button>
           );
         })}
       </nav>
 
-      <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 transition-all border border-transparent">
+      <button
+        onClick={() => handleClick('Help & Support')}
+        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 transition-all border border-transparent cursor-pointer"
+      >
         <HelpCircle className="h-5 w-5" />
         Help & Support
       </button>

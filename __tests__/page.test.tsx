@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import FanDashboard from '../src/app/page';
 import '@testing-library/jest-dom';
 
@@ -150,18 +150,26 @@ describe('FanDashboard Page Component Tests', () => {
   test('mobile bottom navigation switches active tabs', () => {
     render(<FanDashboard />);
 
+    const mobileNav = screen.getByRole('navigation', {
+      name: 'Primary navigation',
+    });
+
     // Default tab is Map
-    const mapTabBtn = screen.getByRole('button', { name: 'Map' });
+    const mapTabBtn = within(mobileNav).getByRole('button', { name: 'Map' });
     expect(mapTabBtn).toHaveAttribute('aria-current', 'page');
 
     // Click Settings
-    const settingsTabBtn = screen.getByRole('button', { name: 'Settings' });
+    const settingsTabBtn = within(mobileNav).getByRole('button', {
+      name: 'Settings',
+    });
     fireEvent.click(settingsTabBtn);
     expect(settingsTabBtn).toHaveAttribute('aria-current', 'page');
     expect(mapTabBtn).not.toHaveAttribute('aria-current', 'page');
 
     // Click Assistant
-    const assistantTabBtn = screen.getByRole('button', { name: 'Assistant' });
+    const assistantTabBtn = within(mobileNav).getByRole('button', {
+      name: 'Assistant',
+    });
     fireEvent.click(assistantTabBtn);
     expect(assistantTabBtn).toHaveAttribute('aria-current', 'page');
   });
@@ -236,5 +244,27 @@ describe('FanDashboard Page Component Tests', () => {
     expect(
       screen.getByText('Lost & Found catalog loaded.')
     ).toBeInTheDocument();
+  });
+
+  test('responds to show-system-alert CustomEvent on window and displays modal alert', () => {
+    render(<FanDashboard />);
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('show-system-alert', {
+          detail: { message: 'Tickets module is coming soon!' },
+        })
+      );
+    });
+
+    expect(
+      screen.getByText('Tickets module is coming soon!')
+    ).toBeInTheDocument();
+
+    const confirmBtn = screen.getByRole('button', { name: 'Confirm' });
+    fireEvent.click(confirmBtn);
+    expect(
+      screen.queryByText('Tickets module is coming soon!')
+    ).not.toBeInTheDocument();
   });
 });
