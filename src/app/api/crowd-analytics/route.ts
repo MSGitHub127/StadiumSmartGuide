@@ -28,8 +28,10 @@ export async function GET(): Promise<NextResponse> {
 export const POST = wrapRoute({
   resultSchema: CrowdAnalyticsResultSchema,
   errorOverrides: {
-    timeout: 'Anomaly analysis timed out. Raw sensor bands are still shown on the map.',
-    generation: 'Unable to complete anomaly analysis. Raw sensor bands remain available.',
+    timeout:
+      'Anomaly analysis timed out. Raw sensor bands are still shown on the map.',
+    generation:
+      'Unable to complete anomaly analysis. Raw sensor bands remain available.',
   },
   async execute() {
     const sensors = await loadSensors();

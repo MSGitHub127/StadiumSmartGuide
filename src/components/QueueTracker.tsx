@@ -27,7 +27,9 @@ export default function QueueTracker(): JSX.Element {
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
       {/* Header */}
       <div className="mb-3 mt-0.5">
-        <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">Live Queue Tracker</h2>
+        <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">
+          Live Queue Tracker
+        </h2>
         <p className="text-xs text-slate-350 mt-0.5">Real-time wait times</p>
       </div>
 
@@ -38,9 +40,15 @@ export default function QueueTracker(): JSX.Element {
       )}
 
       {!sensors && !error && (
-        <ul className="space-y-2 flex-1 min-h-0 overflow-y-auto" aria-label="Loading queue data">
+        <ul
+          className="space-y-2 flex-1 min-h-0 overflow-y-auto"
+          aria-label="Loading queue data"
+        >
           {[1, 2, 3].map((i) => (
-            <li key={i} className="animate-pulse h-10 rounded-lg bg-slate-800/40" />
+            <li
+              key={i}
+              className="animate-pulse h-10 rounded-lg bg-slate-800/40"
+            />
           ))}
         </ul>
       )}
@@ -60,18 +68,32 @@ export default function QueueTracker(): JSX.Element {
                   <div className="flex items-center gap-2.5">
                     <span
                       className={`h-2.5 w-2.5 rounded-full ${BAND_DOT[s.congestion_band]} shadow-[0_0_8px_currentColor]`}
-                      style={{ color: s.congestion_band === 'green' ? '#34d399' : s.congestion_band === 'amber' ? '#fbbf24' : '#f43f5e' }}
+                      style={{
+                        color:
+                          s.congestion_band === 'green'
+                            ? '#34d399'
+                            : s.congestion_band === 'amber'
+                              ? '#fbbf24'
+                              : '#f43f5e',
+                      }}
                     />
                     <div>
-                      <p className="text-xs font-semibold text-slate-200">{zoneName}</p>
+                      <p className="text-xs font-semibold text-slate-200">
+                        {zoneName}
+                      </p>
                       <p className="text-[10px] text-slate-500">Concourse L1</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold ${BAND_TIME_COLOR[s.congestion_band]}`}>
+                    <span
+                      className={`text-xs font-bold ${BAND_TIME_COLOR[s.congestion_band]}`}
+                    >
                       {waitMin} min
                     </span>
-                    <Users className={`h-3 w-3 ${BAND_TIME_COLOR[s.congestion_band]}`} aria-hidden="true" />
+                    <Users
+                      className={`h-3 w-3 ${BAND_TIME_COLOR[s.congestion_band]}`}
+                      aria-hidden="true"
+                    />
                   </div>
                 </div>
                 {/* Visual horizontal congestion bar */}
@@ -81,11 +103,16 @@ export default function QueueTracker(): JSX.Element {
                       s.congestion_band === 'green'
                         ? 'from-emerald-500 to-teal-450 animate-pulse'
                         : s.congestion_band === 'amber'
-                        ? 'from-amber-500 to-orange-450'
-                        : 'from-rose-500 to-red-500'
+                          ? 'from-amber-500 to-orange-450'
+                          : 'from-rose-500 to-red-500'
                     }`}
                     style={{
-                      width: s.congestion_band === 'green' ? '25%' : s.congestion_band === 'amber' ? '60%' : '90%'
+                      width:
+                        s.congestion_band === 'green'
+                          ? '25%'
+                          : s.congestion_band === 'amber'
+                            ? '60%'
+                            : '90%',
                     }}
                   />
                 </div>

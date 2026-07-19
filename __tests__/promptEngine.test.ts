@@ -1,4 +1,9 @@
-import { sanitizeField, buildWayfindingPrompt, buildAssistantPrompt, buildCrowdAnalyticsPrompt } from '../src/utils/promptEngine';
+import {
+  sanitizeField,
+  buildWayfindingPrompt,
+  buildAssistantPrompt,
+  buildCrowdAnalyticsPrompt,
+} from '../src/utils/promptEngine';
 
 describe('Prompt Engine Utility Tests', () => {
   describe('sanitizeField', () => {

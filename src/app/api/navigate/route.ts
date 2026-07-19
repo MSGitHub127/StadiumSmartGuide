@@ -3,14 +3,19 @@ import path from 'path';
 import { parseSensors } from '@/utils/csvParser';
 import { buildWayfindingPrompt } from '@/utils/promptEngine';
 import { wrapRoute } from '@/utils/routeWrapper';
-import { WayfindingRequestSchema, WayfindingResultSchema } from '@/utils/schemas';
+import {
+  WayfindingRequestSchema,
+  WayfindingResultSchema,
+} from '@/utils/schemas';
 
 export const POST = wrapRoute({
   bodySchema: WayfindingRequestSchema,
   resultSchema: WayfindingResultSchema,
   errorOverrides: {
-    timeout: 'Routing engine timed out. Showing last-known safe path may be unavailable — please retry.',
-    generation: 'Unable to compute a route right now. Please try again in a moment.',
+    timeout:
+      'Routing engine timed out. Showing last-known safe path may be unavailable — please retry.',
+    generation:
+      'Unable to compute a route right now. Please try again in a moment.',
   },
   async execute(req, body) {
     const { originZoneId, destinationAmenityId, accessibilityRequired } = body;

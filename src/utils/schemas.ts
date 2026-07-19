@@ -20,10 +20,12 @@ export const WayfindingResultSchema = z.object({
 export const AssistantResultSchema = z.object({
   response_text: z.string(),
   language: z.string(),
-  deep_link_action: z.object({
-    type: z.string(),
-    target_id: z.string(),
-  }).nullable(),
+  deep_link_action: z
+    .object({
+      type: z.string(),
+      target_id: z.string(),
+    })
+    .nullable(),
 });
 
 export const CrowdAlertSchema = z.object({

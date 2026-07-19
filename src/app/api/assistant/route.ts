@@ -15,7 +15,8 @@ export const POST = wrapRoute({
   resultSchema: AssistantResultSchema,
   errorOverrides: {
     timeout: 'The assistant is taking longer than expected. Please try again.',
-    generation: 'Unable to answer right now. Please rephrase or try again shortly.',
+    generation:
+      'Unable to answer right now. Please rephrase or try again shortly.',
   },
   async execute(req, body) {
     const { userMessage, detectedLanguage } = body;

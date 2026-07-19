@@ -46,7 +46,7 @@ const PLANNER_OPTIONS = [
   { value: 'ZONE-ELEVATOR-A2', label: 'Elevator A2 (All Levels)' },
   { value: 'ZONE-CONCESSION-02', label: 'Concession 02 (Level 2)' },
   { value: 'AMN-RESTROOM-04', label: 'Restroom 04 (Concourse L1)' },
-  { value: 'AMN-ELEVATOR-01', label: 'Elevator 01' }
+  { value: 'AMN-ELEVATOR-01', label: 'Elevator 01' },
 ];
 
 const SIDEBAR_ITEMS = [
@@ -134,7 +134,12 @@ export default function FanDashboard(): JSX.Element {
       const path: string[] = Array.isArray(data.path) ? data.path : [];
       setActivePath(path);
 
-      if (audioAssistance && path.length > 0 && typeof window !== 'undefined' && window.speechSynthesis) {
+      if (
+        audioAssistance &&
+        path.length > 0 &&
+        typeof window !== 'undefined' &&
+        window.speechSynthesis
+      ) {
         let totalSeconds = Math.max(path.length - 1, 0) * 120; // 2 minutes walking per segment (1.2 m/s avg walking speed)
         path.forEach((zoneId) => {
           const sensor = sensors.find((s) => s.zone_id === zoneId);
@@ -147,7 +152,9 @@ export default function FanDashboard(): JSX.Element {
         window.speechSynthesis.speak(utterance);
       }
     } catch (err) {
-      setRouteError(err instanceof Error ? err.message : 'Unable to compute route.');
+      setRouteError(
+        err instanceof Error ? err.message : 'Unable to compute route.'
+      );
     } finally {
       setRouting(false);
     }
@@ -180,8 +187,12 @@ export default function FanDashboard(): JSX.Element {
           <Navigation className="h-5 w-5 text-white" aria-hidden="true" />
         </div>
         <div>
-          <h1 className="font-display text-base font-bold text-white tracking-wide leading-none">Stadium</h1>
-          <p className="text-[11px] text-slate-400 tracking-wide mt-0.5">SmartGuide</p>
+          <h1 className="font-display text-base font-bold text-white tracking-wide leading-none">
+            Stadium
+          </h1>
+          <p className="text-[11px] text-slate-400 tracking-wide mt-0.5">
+            SmartGuide
+          </p>
         </div>
       </div>
 
@@ -216,12 +227,17 @@ export default function FanDashboard(): JSX.Element {
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-indigo-500 to-rose-500" />
       <div className="flex items-center gap-2 mt-0.5">
         <CircleDot className="h-5 w-5 text-cyan-400" aria-hidden="true" />
-        <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">Trip Planner</h2>
+        <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">
+          Trip Planner
+        </h2>
       </div>
 
       <div className="relative space-y-0 text-slate-200">
         <div>
-          <label htmlFor="origin" className="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-widest">
+          <label
+            htmlFor="origin"
+            className="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-widest"
+          >
             From
           </label>
           <div className="relative">
@@ -233,13 +249,20 @@ export default function FanDashboard(): JSX.Element {
               className="w-full rounded-xl bg-slate-800/60 border border-slate-700/50 pl-9 pr-10 py-3 text-sm text-white font-medium focus-visible:outline-none focus-visible:border-cyan-500/50 focus-visible:ring-1 focus-visible:ring-cyan-500/20 transition-colors appearance-none cursor-pointer"
             >
               {PLANNER_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  className="bg-slate-900 text-white"
+                >
                   {opt.label}
                 </option>
               ))}
             </select>
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden="true" />
+              <ChevronDown
+                className="h-4 w-4 text-slate-500"
+                aria-hidden="true"
+              />
             </span>
           </div>
         </div>
@@ -249,7 +272,10 @@ export default function FanDashboard(): JSX.Element {
         </div>
 
         <div>
-          <label htmlFor="destination" className="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-widest">
+          <label
+            htmlFor="destination"
+            className="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-widest"
+          >
             To
           </label>
           <div className="relative">
@@ -263,18 +289,80 @@ export default function FanDashboard(): JSX.Element {
               className="w-full rounded-xl bg-slate-800/60 border border-slate-700/50 pl-9 pr-10 py-3 text-sm text-white font-medium focus-visible:outline-none focus-visible:border-cyan-500/50 focus-visible:ring-1 focus-visible:ring-cyan-500/20 transition-colors appearance-none cursor-pointer"
             >
               {PLANNER_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-slate-900 text-white">
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  className="bg-slate-900 text-white"
+                >
                   {opt.label}
                 </option>
               ))}
             </select>
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown className="h-4 w-4 text-slate-500" aria-hidden="true" />
+              <ChevronDown
+                className="h-4 w-4 text-slate-500"
+                aria-hidden="true"
+              />
             </span>
           </div>
         </div>
       </div>
 
+      {/* Accessibility Toggles */}
+      <div className="space-y-3.5 pt-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users
+              className="h-4.5 w-4.5 text-emerald-400"
+              aria-hidden="true"
+            />
+            <span className="text-xs font-semibold text-slate-300">
+              Wheelchair Routing
+            </span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={wheelchairRouting}
+            onClick={() => setWheelchairRouting(!wheelchairRouting)}
+            className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-300 ${
+              wheelchairRouting
+                ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
+                : 'bg-slate-700'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                wheelchairRouting ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Radio className="h-4.5 w-4.5 text-cyan-400" aria-hidden="true" />
+            <span className="text-xs font-semibold text-slate-300">
+              Audio Assistance
+            </span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={audioAssistance}
+            onClick={() => setAudioAssistance(!audioAssistance)}
+            className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-300 ${
+              audioAssistance
+                ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
+                : 'bg-slate-700'
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full bg-white transition-transform duration-300 ${
+                audioAssistance ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
 
       <button
         onClick={() => void handleFindRoute()}
@@ -293,7 +381,9 @@ export default function FanDashboard(): JSX.Element {
           </span>
         )}
       </button>
-      <p className="text-[10px] text-slate-400 text-center -mt-2">Get fastest & most accessible route</p>
+      <p className="text-[10px] text-slate-400 text-center -mt-2">
+        Get fastest & most accessible route
+      </p>
 
       {routeError && (
         <p role="alert" className="text-xs text-rose-400 px-1">
@@ -310,23 +400,43 @@ export default function FanDashboard(): JSX.Element {
               Estimated Time
             </div>
           </div>
-          <p className="text-2xl font-bold text-white">{routeDetails.eta} <span className="text-sm font-normal text-slate-500">({routeDetails.distance})</span></p>
+          <p className="text-2xl font-bold text-white">
+            {routeDetails.eta}{' '}
+            <span className="text-sm font-normal text-slate-500">
+              ({routeDetails.distance})
+            </span>
+          </p>
           <p className="text-[11px] text-slate-400">via Concourse Level 1</p>
-          <p className="text-[11px] text-emerald-400 font-medium">Light foot traffic</p>
+          <p className="text-[11px] text-emerald-400 font-medium">
+            Light foot traffic
+          </p>
         </div>
       )}
     </div>
   );
 
   return (
-    <main id="main-content" className="h-screen max-h-screen overflow-hidden flex flex-col bg-[#020617]">
+    <main
+      id="main-content"
+      className="h-screen max-h-screen overflow-hidden flex flex-col bg-[#020617]"
+    >
       {/* Header */}
       <header className="px-5 py-3 glass-panel border-x-0 border-t-0 flex items-center justify-between relative z-50">
         <div className="flex items-center gap-3">
-          <Image src="/logo.jpg" alt="Stadium SmartGuide Logo" width={40} height={40} className="rounded-xl shadow-lg shadow-cyan-500/20 object-cover" />
+          <Image
+            src="/logo.jpg"
+            alt="Stadium SmartGuide Logo"
+            width={40}
+            height={40}
+            className="rounded-xl shadow-lg shadow-cyan-500/20 object-cover"
+          />
           <div>
-            <h1 className="font-display text-lg font-bold text-white tracking-wide leading-none">Stadium SmartGuide</h1>
-            <p className="text-xs text-slate-350 tracking-wide mt-1">FIFA World Cup 2026</p>
+            <h1 className="font-display text-lg font-bold text-white tracking-wide leading-none">
+              Stadium SmartGuide
+            </h1>
+            <p className="text-xs text-slate-350 tracking-wide mt-1">
+              FIFA World Cup 2026
+            </p>
           </div>
         </div>
 
@@ -341,19 +451,61 @@ export default function FanDashboard(): JSX.Element {
           {/* Quick Actions (Mini Icon Row) */}
           <div className="flex items-center gap-1 bg-slate-900/60 border border-slate-700/30 rounded-xl p-1">
             {[
-              { id: 'sos', icon: PhoneCall, label: 'Emergency Call', color: 'text-rose-450 hover:bg-rose-500/15 hover:text-rose-350', action: () => showAlert('SOS: Emergency services dispatched to Gate 3.') },
-              { id: 'report', icon: HelpCircle, label: 'Report Issue', color: 'text-amber-450 hover:bg-amber-500/15 hover:text-amber-350', action: () => {
-                showPrompt('What issue would you like to report?', (res) => {
-                  showAlert('Thank you for reporting: ' + res);
-                });
-              } },
-              { id: 'lost', icon: Briefcase, label: 'Lost & Found', color: 'text-purple-450 hover:bg-purple-500/15 hover:text-purple-350', action: () => showAlert('Lost & Found catalog loaded.') },
-              { id: 'water', icon: Droplets, label: 'Hydration Points', color: 'text-cyan-400 hover:bg-cyan-500/15 hover:text-cyan-350', action: () => {
-                window.dispatchEvent(new CustomEvent('highlight-amenity', { detail: { type: 'Food & Drinks' } }));
-              } },
-              { id: 'prayer', icon: Home, label: 'Prayer Rooms', color: 'text-emerald-450 hover:bg-emerald-500/15 hover:text-emerald-350', action: () => {
-                window.dispatchEvent(new CustomEvent('highlight-amenity', { detail: { type: 'Info Desk' } }));
-              } },
+              {
+                id: 'sos',
+                icon: PhoneCall,
+                label: 'Emergency Call',
+                color: 'text-rose-450 hover:bg-rose-500/15 hover:text-rose-350',
+                action: () =>
+                  showAlert('SOS: Emergency services dispatched to Gate 3.'),
+              },
+              {
+                id: 'report',
+                icon: HelpCircle,
+                label: 'Report Issue',
+                color:
+                  'text-amber-450 hover:bg-amber-500/15 hover:text-amber-350',
+                action: () => {
+                  showPrompt('What issue would you like to report?', (res) => {
+                    showAlert('Thank you for reporting: ' + res);
+                  });
+                },
+              },
+              {
+                id: 'lost',
+                icon: Briefcase,
+                label: 'Lost & Found',
+                color:
+                  'text-purple-450 hover:bg-purple-500/15 hover:text-purple-350',
+                action: () => showAlert('Lost & Found catalog loaded.'),
+              },
+              {
+                id: 'water',
+                icon: Droplets,
+                label: 'Hydration Points',
+                color: 'text-cyan-400 hover:bg-cyan-500/15 hover:text-cyan-350',
+                action: () => {
+                  window.dispatchEvent(
+                    new CustomEvent('highlight-amenity', {
+                      detail: { type: 'Food & Drinks' },
+                    })
+                  );
+                },
+              },
+              {
+                id: 'prayer',
+                icon: Home,
+                label: 'Prayer Rooms',
+                color:
+                  'text-emerald-450 hover:bg-emerald-500/15 hover:text-emerald-350',
+                action: () => {
+                  window.dispatchEvent(
+                    new CustomEvent('highlight-amenity', {
+                      detail: { type: 'Info Desk' },
+                    })
+                  );
+                },
+              },
             ].map((item) => {
               const Icon = item.icon;
               return (
@@ -377,30 +529,45 @@ export default function FanDashboard(): JSX.Element {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            <span className="text-[11px] font-bold text-white uppercase tracking-wider">Live</span>
-            <span className="text-[10px] text-emerald-200 hidden lg:inline">Stadium Operational</span>
+            <span className="text-[11px] font-bold text-white uppercase tracking-wider">
+              Live
+            </span>
+            <span className="text-[10px] text-emerald-200 hidden lg:inline">
+              Stadium Operational
+            </span>
           </div>
 
           {/* Stat badges */}
           <div className="hidden md:flex glass-panel rounded-xl px-3.5 py-2 items-center gap-2">
-            <Thermometer className="h-4 w-4 text-amber-400" aria-hidden="true" />
+            <Thermometer
+              className="h-4 w-4 text-amber-400"
+              aria-hidden="true"
+            />
             <div>
               <p className="text-xs font-bold text-white leading-none">21°C</p>
-              <p className="text-[9px] text-slate-400 leading-none mt-0.5">Clear Sky</p>
+              <p className="text-[9px] text-slate-400 leading-none mt-0.5">
+                Clear Sky
+              </p>
             </div>
           </div>
           <div className="hidden md:flex glass-panel rounded-xl px-3.5 py-2 items-center gap-2">
             <Cloud className="h-4 w-4 text-cyan-400" aria-hidden="true" />
             <div>
-              <p className="text-xs font-bold text-white leading-none">Moderate</p>
-              <p className="text-[9px] text-slate-400 leading-none mt-0.5">Crowd Level</p>
+              <p className="text-xs font-bold text-white leading-none">
+                Moderate
+              </p>
+              <p className="text-[9px] text-slate-400 leading-none mt-0.5">
+                Crowd Level
+              </p>
             </div>
           </div>
           <div className="hidden md:flex glass-panel rounded-xl px-3.5 py-2 items-center gap-2">
             <Users className="h-4 w-4 text-indigo-400" aria-hidden="true" />
             <div>
               <p className="text-xs font-bold text-white leading-none">127K</p>
-              <p className="text-[9px] text-slate-400 leading-none mt-0.5">Fans Inside</p>
+              <p className="text-[9px] text-slate-400 leading-none mt-0.5">
+                Fans Inside
+              </p>
             </div>
           </div>
 
@@ -419,16 +586,27 @@ export default function FanDashboard(): JSX.Element {
 
             {showNotifications && (
               <div className="absolute right-0 mt-2 w-64 bg-[#0f172a] border border-slate-800 rounded-xl p-3 shadow-2xl z-50 space-y-2 text-xs">
-                <p className="font-bold text-white border-b border-slate-800 pb-1">Safety & Live Alerts</p>
+                <p className="font-bold text-white border-b border-slate-800 pb-1">
+                  Safety & Live Alerts
+                </p>
                 <ul className="space-y-1.5 text-slate-300">
                   <li className="p-1 rounded bg-rose-500/10 border-l-2 border-rose-500 text-[10px]">
-                    <span className="font-semibold text-rose-300">Congestion Alert:</span> Zone Gate 3 is heavily congested. Use alternate paths.
+                    <span className="font-semibold text-rose-300">
+                      Congestion Alert:
+                    </span>{' '}
+                    Zone Gate 3 is heavily congested. Use alternate paths.
                   </li>
                   <li className="p-1 rounded bg-emerald-500/10 border-l-2 border-emerald-500 text-[10px]">
-                    <span className="font-semibold text-emerald-300">Info:</span> Concourse Level 1 transit route is clear.
+                    <span className="font-semibold text-emerald-300">
+                      Info:
+                    </span>{' '}
+                    Concourse Level 1 transit route is clear.
                   </li>
                   <li className="p-1 rounded bg-blue-500/10 border-l-2 border-blue-500 text-[10px]">
-                    <span className="font-semibold text-blue-300">Hydration:</span> 12 water refilling points are fully active nearby.
+                    <span className="font-semibold text-blue-300">
+                      Hydration:
+                    </span>{' '}
+                    12 water refilling points are fully active nearby.
                   </li>
                 </ul>
               </div>
@@ -440,9 +618,7 @@ export default function FanDashboard(): JSX.Element {
       {/* Dashboard Panels */}
       <div className="p-4 flex-1 overflow-hidden flex flex-col min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 min-h-0">
-          <div className="md:col-span-1 h-full min-h-0">
-            {ControlSidebar}
-          </div>
+          <div className="md:col-span-1 h-full min-h-0">{ControlSidebar}</div>
           <div className="md:col-span-2 h-full min-h-0">
             <LiveMap activePath={activePath} />
           </div>
@@ -462,11 +638,15 @@ export default function FanDashboard(): JSX.Element {
         aria-label="Primary navigation"
         className="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-x-0 border-b-0 flex justify-around py-2.5 z-30"
       >
-        {([
+        {[
           { tab: 'settings' as MobileTab, icon: Settings2, label: 'Settings' },
           { tab: 'map' as MobileTab, icon: MapPin, label: 'Map' },
-          { tab: 'assistant' as MobileTab, icon: MessageCircle, label: 'Assistant' },
-        ]).map(({ tab, icon: Icon, label }) => (
+          {
+            tab: 'assistant' as MobileTab,
+            icon: MessageCircle,
+            label: 'Assistant',
+          },
+        ].map(({ tab, icon: Icon, label }) => (
           <button
             key={tab}
             onClick={() => setMobileTab(tab)}
@@ -488,14 +668,20 @@ export default function FanDashboard(): JSX.Element {
         <div className="fixed inset-0 bg-[#020617]/80 backdrop-blur-sm flex items-center justify-center z-[9999]">
           <div className="glass-premium rounded-2xl p-6 w-full max-w-md mx-4 relative border border-slate-700/50 shadow-2xl">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500" />
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">System Notification</h3>
-            <p className="text-sm text-slate-350 leading-relaxed mb-5">{modal.message}</p>
-            
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">
+              System Notification
+            </h3>
+            <p className="text-sm text-slate-350 leading-relaxed mb-5">
+              {modal.message}
+            </p>
+
             {modal.type === 'prompt' && (
               <input
                 type="text"
                 value={modal.inputValue}
-                onChange={(e) => setModal(prev => ({ ...prev, inputValue: e.target.value }))}
+                onChange={(e) =>
+                  setModal((prev) => ({ ...prev, inputValue: e.target.value }))
+                }
                 placeholder="Type details here..."
                 className="w-full rounded-xl bg-slate-800/60 border border-slate-700/50 px-4 py-3 text-sm text-white placeholder-slate-500 mb-5 focus-visible:outline-none focus-visible:border-cyan-500/50 focus-visible:ring-1 focus-visible:ring-cyan-500/20 transition-colors"
                 autoFocus
@@ -505,7 +691,9 @@ export default function FanDashboard(): JSX.Element {
             <div className="flex items-center justify-end gap-3">
               {modal.type === 'prompt' && (
                 <button
-                  onClick={() => setModal(prev => ({ ...prev, isOpen: false }))}
+                  onClick={() =>
+                    setModal((prev) => ({ ...prev, isOpen: false }))
+                  }
                   className="px-4 py-2.5 rounded-xl border border-slate-700/60 text-slate-400 text-xs font-semibold hover:bg-slate-800 hover:text-white transition-colors"
                 >
                   Cancel
@@ -513,7 +701,7 @@ export default function FanDashboard(): JSX.Element {
               )}
               <button
                 onClick={() => {
-                  setModal(prev => ({ ...prev, isOpen: false }));
+                  setModal((prev) => ({ ...prev, isOpen: false }));
                   if (modal.onConfirm) {
                     modal.onConfirm(modal.inputValue);
                   }

@@ -50,7 +50,12 @@ avoid_zones where a viable detour exists.`;
 
   const fewShot = [
     {
-      input: { origin: 'ZONE-GATE-3', destination: 'AMN-RESTROOM-04', accessibility_required: false, avoid_zones: ['ZONE-GATE-3'] },
+      input: {
+        origin: 'ZONE-GATE-3',
+        destination: 'AMN-RESTROOM-04',
+        accessibility_required: false,
+        avoid_zones: ['ZONE-GATE-3'],
+      },
       output: {
         path: ['ZONE-GATE-3', 'ZONE-CONCOURSE-N', 'AMN-RESTROOM-04'],
         rerouted: true,
@@ -58,7 +63,12 @@ avoid_zones where a viable detour exists.`;
       },
     },
     {
-      input: { origin: 'ZONE-CONCOURSE-N', destination: 'AMN-ELEVATOR-01', accessibility_required: true, avoid_zones: [] },
+      input: {
+        origin: 'ZONE-CONCOURSE-N',
+        destination: 'AMN-ELEVATOR-01',
+        accessibility_required: true,
+        avoid_zones: [],
+      },
       output: {
         path: ['ZONE-CONCOURSE-N', 'AMN-ELEVATOR-01'],
         rerouted: false,

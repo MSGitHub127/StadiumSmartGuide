@@ -53,9 +53,14 @@ function splitRow(line: string): string[] {
   return line.split(',').map((cell) => cell.trim());
 }
 
-function assertHeader(actual: string[], expected: readonly string[], schemaName: string): void {
+function assertHeader(
+  actual: string[],
+  expected: readonly string[],
+  schemaName: string
+): void {
   const matches =
-    actual.length === expected.length && expected.every((col, i) => actual[i] === col);
+    actual.length === expected.length &&
+    expected.every((col, i) => actual[i] === col);
   if (!matches) {
     throw new Error(
       `csvParser: ${schemaName} header mismatch. Expected [${expected.join(',')}] got [${actual.join(',')}]`
@@ -119,7 +124,10 @@ export function parseSeats(raw: string): SeatRecord[] {
       is_accessible === undefined ||
       nearest_amenity_id === undefined
     ) {
-      console.warn('csvParser: skipping seats.csv row with missing field', line);
+      console.warn(
+        'csvParser: skipping seats.csv row with missing field',
+        line
+      );
       return null;
     }
     return {
@@ -150,7 +158,10 @@ export function parseSensors(raw: string): SensorRecord[] {
       capStr === undefined ||
       waitStr === undefined
     ) {
-      console.warn('csvParser: skipping sensors.csv row with missing field', line);
+      console.warn(
+        'csvParser: skipping sensors.csv row with missing field',
+        line
+      );
       return null;
     }
     const current_occupancy_count = Number(occStr);
@@ -163,7 +174,10 @@ export function parseSensors(raw: string): SensorRecord[] {
       !Number.isFinite(average_wait_seconds) ||
       max_safe_capacity <= 0
     ) {
-      console.warn('csvParser: skipping malformed sensors.csv numeric row', line);
+      console.warn(
+        'csvParser: skipping malformed sensors.csv numeric row',
+        line
+      );
       return null;
     }
 

@@ -18,7 +18,10 @@ const QUICK_PROMPTS = [
 ];
 
 function timeNow(): string {
-  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 export default function ChatConcierge(): JSX.Element {
@@ -44,7 +47,12 @@ export default function ChatConcierge(): JSX.Element {
     const trimmed = (text ?? input).trim();
     if (!trimmed || loading) return;
 
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: 'user', text: trimmed, time: timeNow() };
+    const userMsg: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      text: trimmed,
+      time: timeNow(),
+    };
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
@@ -54,7 +62,10 @@ export default function ChatConcierge(): JSX.Element {
       const res = await fetch('/api/assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userMessage: trimmed, detectedLanguage: 'auto' }),
+        body: JSON.stringify({
+          userMessage: trimmed,
+          detectedLanguage: 'auto',
+        }),
       });
 
       if (!res.ok) {
@@ -75,7 +86,10 @@ export default function ChatConcierge(): JSX.Element {
     } finally {
       setLoading(false);
       requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
       });
     }
   }
@@ -86,12 +100,14 @@ export default function ChatConcierge(): JSX.Element {
       className="glass-premium rounded-2xl p-5 flex flex-col h-full relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500" />
-      
+
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 mt-0.5">
         <Sparkles className="h-5 w-5 text-amber-400" aria-hidden="true" />
         <div>
-          <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">AI Concierge</h2>
+          <h2 className="font-display text-sm font-bold text-white uppercase tracking-widest">
+            AI Concierge
+          </h2>
           <p className="text-xs text-slate-300">Your smart stadium assistant</p>
         </div>
       </div>
@@ -109,7 +125,10 @@ export default function ChatConcierge(): JSX.Element {
             {/* Welcome message */}
             <div className="flex gap-2">
               <div className="flex-shrink-0 h-7 w-7 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center">
-                <Bot className="h-3.5 w-3.5 text-indigo-400" aria-hidden="true" />
+                <Bot
+                  className="h-3.5 w-3.5 text-indigo-400"
+                  aria-hidden="true"
+                />
               </div>
               <div>
                 <div className="rounded-xl rounded-tl-sm px-3 py-2 text-[13px] leading-relaxed bg-gradient-to-br from-slate-800/80 to-slate-900/60 text-slate-100 border border-slate-700/40">
@@ -139,15 +158,24 @@ export default function ChatConcierge(): JSX.Element {
             key={m.id}
             className={`flex gap-2 ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
           >
-            <div className={`flex-shrink-0 h-7 w-7 rounded-lg flex items-center justify-center ${
-              m.role === 'user'
-                ? 'bg-cyan-500/15 border border-cyan-500/30'
-                : 'bg-indigo-500/15 border border-indigo-500/30'
-            }`}>
-              {m.role === 'user'
-                ? <User className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
-                : <Bot className="h-3.5 w-3.5 text-indigo-400" aria-hidden="true" />
-              }
+            <div
+              className={`flex-shrink-0 h-7 w-7 rounded-lg flex items-center justify-center ${
+                m.role === 'user'
+                  ? 'bg-cyan-500/15 border border-cyan-500/30'
+                  : 'bg-indigo-500/15 border border-indigo-500/30'
+              }`}
+            >
+              {m.role === 'user' ? (
+                <User
+                  className="h-3.5 w-3.5 text-cyan-400"
+                  aria-hidden="true"
+                />
+              ) : (
+                <Bot
+                  className="h-3.5 w-3.5 text-indigo-400"
+                  aria-hidden="true"
+                />
+              )}
             </div>
             <div>
               <div
@@ -159,7 +187,9 @@ export default function ChatConcierge(): JSX.Element {
               >
                 {m.text}
               </div>
-              <p className={`text-[10px] text-slate-350 mt-1 ${m.role === 'user' ? 'text-right mr-1' : 'ml-1'}`}>
+              <p
+                className={`text-[10px] text-slate-350 mt-1 ${m.role === 'user' ? 'text-right mr-1' : 'ml-1'}`}
+              >
                 {m.time} {m.role === 'user' && '✓'}
               </p>
             </div>

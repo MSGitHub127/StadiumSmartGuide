@@ -2,7 +2,11 @@
 process.env.GCP_PROJECT_ID = 'test-project';
 process.env.GCP_LOCATION = 'us-central1';
 
-const { generateStructuredJson, VertexTimeoutError, VertexGenerationError } = require('../src/utils/vertexClient');
+const {
+  generateStructuredJson,
+  VertexTimeoutError,
+  VertexGenerationError,
+} = require('../src/utils/vertexClient');
 
 // Mock the VertexAI SDK
 const mockGenerateContent = jest.fn();

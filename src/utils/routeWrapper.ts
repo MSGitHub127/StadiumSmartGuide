@@ -5,7 +5,10 @@ import { VertexTimeoutError, VertexGenerationError } from './vertexClient';
 
 interface RouteHandlerConfig<TBody, TResult> {
   bodySchema?: z.ZodSchema<TBody>;
-  execute: (req: NextRequest, body: TBody) => Promise<{
+  execute: (
+    req: NextRequest,
+    body: TBody
+  ) => Promise<{
     prompt?: string;
     tier?: 'flash' | 'pro';
     cacheKey?: string;
@@ -19,11 +22,17 @@ interface RouteHandlerConfig<TBody, TResult> {
   };
 }
 
-export function wrapRoute<TBody, TResult>(config: RouteHandlerConfig<TBody, TResult>) {
+export function wrapRoute<TBody, TResult>(
+  config: RouteHandlerConfig<TBody, TResult>
+) {
   return async (req: NextRequest): Promise<NextResponse> => {
     // 1. Rate limiting (Only enforce when live project ID is configured to prevent API abuse)
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-    if (process.env.GCP_PROJECT_ID && process.env.USE_MOCK_LLM !== 'true' && isRateLimited(ip)) {
+    if (
+      process.env.GCP_PROJECT_ID &&
+      process.env.USE_MOCK_LLM !== 'true' &&
+      isRateLimited(ip)
+    ) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
@@ -56,7 +65,9 @@ export function wrapRoute<TBody, TResult>(config: RouteHandlerConfig<TBody, TRes
       const executionConfig = await config.execute(req, parsedBody);
 
       if (executionConfig.bypassResponse !== undefined) {
-        const validated = config.resultSchema.parse(executionConfig.bypassResponse);
+        const validated = config.resultSchema.parse(
+          executionConfig.bypassResponse
+        );
         return NextResponse.json(validated, { status: 200 });
       }
 
@@ -82,21 +93,31 @@ export function wrapRoute<TBody, TResult>(config: RouteHandlerConfig<TBody, TRes
       // 6. Validate output against expected result schema
       const finalResult = config.resultSchema.safeParse(rawParsed);
       if (!finalResult.success) {
-        throw new VertexGenerationError('Model output failed schema validation.');
+        throw new VertexGenerationError(
+          'Model output failed schema validation.'
+        );
       }
 
       return NextResponse.json(finalResult.data, { status: 200 });
     } catch (err) {
       if (err instanceof VertexTimeoutError) {
         return NextResponse.json(
-          { error: config.errorOverrides?.timeout ?? 'The request timed out. Please try again.' },
+          {
+            error:
+              config.errorOverrides?.timeout ??
+              'The request timed out. Please try again.',
+          },
           { status: 504 }
         );
       }
       if (err instanceof VertexGenerationError) {
         console.error('API route: generation error', err.message);
         return NextResponse.json(
-          { error: config.errorOverrides?.generation ?? 'Unable to process request right now. Please try again shortly.' },
+          {
+            error:
+              config.errorOverrides?.generation ??
+              'Unable to process request right now. Please try again shortly.',
+          },
           { status: 502 }
         );
       }

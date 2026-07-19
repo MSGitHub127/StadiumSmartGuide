@@ -19,9 +19,16 @@ export const useSensorStore = create<SensorState>((set) => {
       const res = await fetch('/api/crowd-analytics');
       if (!res.ok) throw new Error();
       const data = await res.json();
-      set({ sensors: data.sensors as SensorRecord[], error: null, loading: false });
+      set({
+        sensors: data.sensors as SensorRecord[],
+        error: null,
+        loading: false,
+      });
     } catch {
-      set({ error: 'Live occupancy data is temporarily unavailable.', loading: false });
+      set({
+        error: 'Live occupancy data is temporarily unavailable.',
+        loading: false,
+      });
     }
   };
 

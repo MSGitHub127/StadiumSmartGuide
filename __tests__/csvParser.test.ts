@@ -49,9 +49,15 @@ t,AMBER,500,1000,10
 t,RED,800,1000,10`;
 
     const result = parseSensors(csv);
-    expect(result.find((r) => r.zone_id === 'GREEN')?.congestion_band).toBe('green');
-    expect(result.find((r) => r.zone_id === 'AMBER')?.congestion_band).toBe('amber');
-    expect(result.find((r) => r.zone_id === 'RED')?.congestion_band).toBe('red');
+    expect(result.find((r) => r.zone_id === 'GREEN')?.congestion_band).toBe(
+      'green'
+    );
+    expect(result.find((r) => r.zone_id === 'AMBER')?.congestion_band).toBe(
+      'amber'
+    );
+    expect(result.find((r) => r.zone_id === 'RED')?.congestion_band).toBe(
+      'red'
+    );
   });
 
   it('guards against division-by-zero when max_safe_capacity is zero', () => {
