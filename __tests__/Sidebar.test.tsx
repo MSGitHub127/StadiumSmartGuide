@@ -12,22 +12,6 @@ describe('Sidebar component', () => {
     );
   });
 
-  test('clicking Map dispatches highlight-amenity CustomEvent', () => {
-    const dispatchSpy = jest.spyOn(window, 'dispatchEvent');
-    render(<Sidebar />);
-
-    const mapBtn = screen.getByRole('button', { name: 'Map' });
-    fireEvent.click(mapBtn);
-
-    expect(dispatchSpy).toHaveBeenCalled();
-    const event = dispatchSpy.mock.calls.find(
-      (call) => call[0].type === 'highlight-amenity'
-    );
-    expect(event).toBeDefined();
-    expect((event?.[0] as CustomEvent).detail).toEqual({ type: null });
-    dispatchSpy.mockRestore();
-  });
-
   test('clicking placeholder modules dispatches show-system-alert CustomEvent', () => {
     const dispatchSpy = jest.spyOn(window, 'dispatchEvent');
     render(<Sidebar />);

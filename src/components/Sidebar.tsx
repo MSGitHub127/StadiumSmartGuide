@@ -1,7 +1,6 @@
 import {
   Navigation,
   LayoutDashboard,
-  Map as MapIcon,
   Settings2,
   Ticket,
   Truck,
@@ -15,7 +14,6 @@ import {
 
 const SIDEBAR_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', active: true },
-  { icon: MapIcon, label: 'Map' },
   { icon: Settings2, label: 'Services' },
   { icon: Ticket, label: 'Tickets' },
   { icon: Truck, label: 'Transport' },
@@ -28,26 +26,16 @@ const SIDEBAR_ITEMS = [
 
 /**
  * Desktop-only primary navigation. Only "Dashboard" is a live route today;
- * the rest are visibly disabled (rather than clickable no-ops) until their
- * destination pages exist, so the UI never promises navigation it can't do.
+ * the rest are interactive buttons that notify the user they are coming soon.
  */
 export default function Sidebar(): JSX.Element {
   const handleClick = (label: string) => {
-    if (label === 'Map') {
-      // Highlight Map: clear any highlighted amenity filters to show full view
-      window.dispatchEvent(
-        new CustomEvent('highlight-amenity', {
-          detail: { type: null },
-        })
-      );
-    } else {
-      // General Coming Soon Alert
-      window.dispatchEvent(
-        new CustomEvent('show-system-alert', {
-          detail: { message: `${label} module is coming soon!` },
-        })
-      );
-    }
+    // General Coming Soon Alert
+    window.dispatchEvent(
+      new CustomEvent('show-system-alert', {
+        detail: { message: `${label} module is coming soon!` },
+      })
+    );
   };
 
   return (
