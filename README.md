@@ -56,7 +56,7 @@ npm install
 npm run dev        # Serves at http://localhost:3000
 
 # 3. Run Jest verification tests
-npm test           # Executing all 112 unit and route integration tests
+npm test           # Executing all 124 unit and route integration tests
 
 # 4. Strict TypeScript type check
 node node_modules/typescript/bin/tsc --noEmit
