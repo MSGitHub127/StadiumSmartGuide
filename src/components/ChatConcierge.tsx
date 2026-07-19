@@ -146,7 +146,7 @@ export default function ChatConcierge(): JSX.Element {
                 <div className="rounded-xl rounded-tl-sm px-3 py-2 text-[13px] leading-relaxed bg-gradient-to-br from-slate-800/80 to-slate-900/60 text-slate-100 border border-slate-700/40">
                   👋 Hello! How can I help you today?
                 </div>
-                <p className="text-[10px] text-slate-350 mt-1 ml-1">Just now</p>
+                <p className="text-[10px] text-slate-300 mt-1 ml-1">Just now</p>
               </div>
             </div>
 
@@ -200,7 +200,7 @@ export default function ChatConcierge(): JSX.Element {
                 {m.text}
               </div>
               <p
-                className={`text-[10px] text-slate-350 mt-1 ${m.role === 'user' ? 'text-right mr-1' : 'ml-1'}`}
+                className={`text-[10px] text-slate-300 mt-1 ${m.role === 'user' ? 'text-right mr-1' : 'ml-1'}`}
               >
                 {m.time} {m.role === 'user' && '✓'}
               </p>

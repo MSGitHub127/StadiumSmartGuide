@@ -101,9 +101,9 @@ export default function QueueTracker(): JSX.Element {
                   <div
                     className={`h-full rounded-full bg-gradient-to-r ${
                       s.congestion_band === 'green'
-                        ? 'from-emerald-500 to-teal-450 animate-pulse'
+                        ? 'from-emerald-500 to-teal-400 animate-pulse'
                         : s.congestion_band === 'amber'
-                          ? 'from-amber-500 to-orange-450'
+                          ? 'from-amber-500 to-orange-400'
                           : 'from-rose-500 to-red-500'
                     }`}
                     style={{

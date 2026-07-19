@@ -34,7 +34,10 @@ import {
 import LiveMap from '@/components/LiveMap';
 import ChatConcierge from '@/components/ChatConcierge';
 import QueueTracker from '@/components/QueueTracker';
+import Sidebar from '@/components/Sidebar';
 import { useSensorPolling } from '@/hooks/useSensorPolling';
+import { calculateRouteStats } from '@/utils/routeStats';
+import { getCrowdLevel } from '@/utils/crowdLevel';
 
 type MobileTab = 'map' | 'settings' | 'assistant';
 
@@ -49,19 +52,6 @@ const PLANNER_OPTIONS = [
   { value: 'AMN-ELEVATOR-01', label: 'Elevator 01' },
 ];
 
-const SIDEBAR_ITEMS = [
-  { icon: LayoutDashboard, label: 'Dashboard', active: true },
-  { icon: MapIcon, label: 'Map' },
-  { icon: Settings2, label: 'Services' },
-  { icon: Ticket, label: 'Tickets' },
-  { icon: Truck, label: 'Transport' },
-  { icon: Utensils, label: 'Food & Drinks' },
-  { icon: HeartPulse, label: 'Safety' },
-  { icon: Bell, label: 'Notifications' },
-  { icon: User, label: 'Profile' },
-  { icon: Settings, label: 'Settings' },
-];
-
 export default function FanDashboard(): JSX.Element {
   const [origin, setOrigin] = useState('ZONE-GATE-3');
   const [destination, setDestination] = useState('AMN-RESTROOM-04');
@@ -73,6 +63,8 @@ export default function FanDashboard(): JSX.Element {
   const [mobileTab, setMobileTab] = useState<MobileTab>('map');
   const { sensors: polledSensors } = useSensorPolling();
   const sensors = polledSensors ?? [];
+  const { level: crowdLevel, colorClass: crowdColorClass } =
+    getCrowdLevel(sensors);
   const [showNotifications, setShowNotifications] = useState(false);
   const [modal, setModal] = useState<{
     isOpen: boolean;
@@ -135,14 +127,8 @@ export default function FanDashboard(): JSX.Element {
         typeof window !== 'undefined' &&
         window.speechSynthesis
       ) {
-        let totalSeconds = Math.max(path.length - 1, 0) * 120; // 2 minutes walking per segment (1.2 m/s avg walking speed)
-        path.forEach((zoneId) => {
-          const sensor = sensors.find((s) => s.zone_id === zoneId);
-          if (sensor) totalSeconds += sensor.average_wait_seconds;
-        });
-        const minutes = Math.max(Math.round(totalSeconds / 60), 3);
-        const distance = (path.length * 0.15).toFixed(1);
-        const text = `Route calculated. Estimated travel time is ${minutes} minutes, total distance is ${distance} kilometers.`;
+        const { etaMinutes, distanceKm } = calculateRouteStats(path, sensors);
+        const text = `Route calculated. Estimated travel time is ${etaMinutes} minutes, total distance is ${distanceKm} kilometers.`;
         const utterance = new SpeechSynthesisUtterance(text);
         window.speechSynthesis.speak(utterance);
       }
@@ -158,64 +144,14 @@ export default function FanDashboard(): JSX.Element {
   // Dynamic calculations for path stats
   const getRouteDetails = () => {
     if (!activePath || activePath.length === 0) return null;
-    let totalSeconds = Math.max(activePath.length - 1, 0) * 120; // 2 minutes walking per segment
-    activePath.forEach((zoneId) => {
-      const sensor = sensors.find((s) => s.zone_id === zoneId);
-      if (sensor) {
-        totalSeconds += sensor.average_wait_seconds;
-      }
-    });
-    const totalMinutes = Math.max(Math.round(totalSeconds / 60), 3);
-    const distance = (activePath.length * 0.15).toFixed(1);
+    const { etaMinutes, distanceKm } = calculateRouteStats(activePath, sensors);
     return {
-      eta: `${totalMinutes} min`,
-      distance: `${distance} km`,
+      eta: `${etaMinutes} min`,
+      distance: `${distanceKm} km`,
     };
   };
 
   const routeDetails = getRouteDetails();
-
-  const LeftSidebar = (
-    <aside className="w-64 hidden lg:flex flex-col gap-6 p-5 border-r border-slate-800/40 bg-slate-950/20">
-      <div className="flex items-center gap-3 px-1">
-        <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 shadow-lg shadow-cyan-500/20">
-          <Navigation className="h-5 w-5 text-white" aria-hidden="true" />
-        </div>
-        <div>
-          <h1 className="font-display text-base font-bold text-white tracking-wide leading-none">
-            Stadium
-          </h1>
-          <p className="text-[11px] text-slate-400 tracking-wide mt-0.5">
-            SmartGuide
-          </p>
-        </div>
-      </div>
-
-      <nav className="flex-1 space-y-1">
-        {SIDEBAR_ITEMS.map((item) => {
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.label}
-              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                item.active
-                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_12px_rgba(6,182,212,0.1)]'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 border border-transparent'
-              }`}
-            >
-              <Icon className="h-5 w-5" />
-              {item.label}
-            </button>
-          );
-        })}
-      </nav>
-
-      <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 transition-all border border-transparent">
-        <HelpCircle className="h-5 w-5" />
-        Help & Support
-      </button>
-    </aside>
-  );
 
   const ControlSidebar = (
     <div className="glass-premium rounded-2xl p-5 space-y-5 h-full relative overflow-hidden">
@@ -429,7 +365,7 @@ export default function FanDashboard(): JSX.Element {
             <h1 className="font-display text-lg font-bold text-white tracking-wide leading-none">
               Stadium SmartGuide
             </h1>
-            <p className="text-xs text-slate-350 tracking-wide mt-1">
+            <p className="text-xs text-slate-300 tracking-wide mt-1">
               FIFA World Cup 2026
             </p>
           </div>
@@ -450,7 +386,7 @@ export default function FanDashboard(): JSX.Element {
                 id: 'sos',
                 icon: PhoneCall,
                 label: 'Emergency Call',
-                color: 'text-rose-450 hover:bg-rose-500/15 hover:text-rose-350',
+                color: 'text-rose-400 hover:bg-rose-500/15 hover:text-rose-300',
                 action: () =>
                   showAlert('SOS: Emergency services dispatched to Gate 3.'),
               },
@@ -459,7 +395,7 @@ export default function FanDashboard(): JSX.Element {
                 icon: HelpCircle,
                 label: 'Report Issue',
                 color:
-                  'text-amber-450 hover:bg-amber-500/15 hover:text-amber-350',
+                  'text-amber-400 hover:bg-amber-500/15 hover:text-amber-300',
                 action: () => {
                   showPrompt('What issue would you like to report?', (res) => {
                     showAlert('Thank you for reporting: ' + res);
@@ -471,14 +407,14 @@ export default function FanDashboard(): JSX.Element {
                 icon: Briefcase,
                 label: 'Lost & Found',
                 color:
-                  'text-purple-450 hover:bg-purple-500/15 hover:text-purple-350',
+                  'text-purple-400 hover:bg-purple-500/15 hover:text-purple-300',
                 action: () => showAlert('Lost & Found catalog loaded.'),
               },
               {
                 id: 'water',
                 icon: Droplets,
                 label: 'Hydration Points',
-                color: 'text-cyan-400 hover:bg-cyan-500/15 hover:text-cyan-350',
+                color: 'text-cyan-400 hover:bg-cyan-500/15 hover:text-cyan-300',
                 action: () => {
                   window.dispatchEvent(
                     new CustomEvent('highlight-amenity', {
@@ -492,7 +428,7 @@ export default function FanDashboard(): JSX.Element {
                 icon: Home,
                 label: 'Prayer Rooms',
                 color:
-                  'text-emerald-450 hover:bg-emerald-500/15 hover:text-emerald-350',
+                  'text-emerald-400 hover:bg-emerald-500/15 hover:text-emerald-300',
                 action: () => {
                   window.dispatchEvent(
                     new CustomEvent('highlight-amenity', {
@@ -546,10 +482,13 @@ export default function FanDashboard(): JSX.Element {
             </div>
           </div>
           <div className="hidden md:flex glass-panel rounded-xl px-3.5 py-2 items-center gap-2">
-            <Cloud className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+            <Cloud
+              className={`h-4 w-4 ${crowdColorClass}`}
+              aria-hidden="true"
+            />
             <div>
               <p className="text-xs font-bold text-white leading-none">
-                Moderate
+                {crowdLevel}
               </p>
               <p className="text-[9px] text-slate-400 leading-none mt-0.5">
                 Crowd Level
@@ -571,7 +510,7 @@ export default function FanDashboard(): JSX.Element {
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               aria-label="Notifications"
-              className="relative h-10 w-10 rounded-xl glass-panel border flex items-center justify-center text-slate-350 hover:text-white transition-all"
+              className="relative h-10 w-10 rounded-xl glass-panel border flex items-center justify-center text-slate-300 hover:text-white transition-all"
             >
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-rose-500 text-[9px] font-bold text-white flex items-center justify-center border border-[#020617]">
@@ -610,33 +549,39 @@ export default function FanDashboard(): JSX.Element {
         </div>
       </header>
 
-      {/* Dashboard Panels */}
-      <div className="p-4 flex-1 overflow-hidden flex flex-col min-h-0">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 min-h-0">
-          <div
-            className={`md:col-span-1 h-full min-h-0 ${
-              mobileTab === 'settings' ? 'block' : 'hidden md:block'
-            }`}
-          >
-            {ControlSidebar}
-          </div>
-          <div
-            className={`md:col-span-2 h-full min-h-0 ${
-              mobileTab === 'map' ? 'block' : 'hidden md:block'
-            }`}
-          >
-            <LiveMap activePath={activePath} />
-          </div>
-          <div
-            className={`md:col-span-1 flex flex-col gap-4 h-full min-h-0 ${
-              mobileTab === 'assistant' ? 'flex' : 'hidden md:flex'
-            }`}
-          >
-            <div className="flex-1 min-h-0">
-              <ChatConcierge />
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Dashboard Panels */}
+        <div className="p-4 flex-1 overflow-hidden flex flex-col min-h-0">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 min-h-0">
+            <div
+              className={`md:col-span-1 h-full min-h-0 ${
+                mobileTab === 'settings' ? 'block' : 'hidden md:block'
+              }`}
+            >
+              {ControlSidebar}
             </div>
-            <div className="flex-1 min-h-0">
-              <QueueTracker />
+            <div
+              className={`md:col-span-2 h-full min-h-0 ${
+                mobileTab === 'map' ? 'block' : 'hidden md:block'
+              }`}
+            >
+              <LiveMap activePath={activePath} />
+            </div>
+            <div
+              className={`md:col-span-1 flex flex-col gap-4 h-full min-h-0 ${
+                mobileTab === 'assistant' ? 'flex' : 'hidden md:flex'
+              }`}
+            >
+              <div className="flex-1 min-h-0">
+                <ChatConcierge />
+              </div>
+              <div className="flex-1 min-h-0">
+                <QueueTracker />
+              </div>
             </div>
           </div>
         </div>
@@ -680,7 +625,7 @@ export default function FanDashboard(): JSX.Element {
             <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-3">
               System Notification
             </h3>
-            <p className="text-sm text-slate-350 leading-relaxed mb-5">
+            <p className="text-sm text-slate-300 leading-relaxed mb-5">
               {modal.message}
             </p>
 

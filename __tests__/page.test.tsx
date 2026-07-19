@@ -181,4 +181,60 @@ describe('FanDashboard Page Component Tests', () => {
     fireEvent.click(bellBtn);
     expect(screen.queryByText('Safety & Live Alerts')).not.toBeInTheDocument();
   });
+
+  test('SOS button click displays custom alert modal and can be dismissed', () => {
+    render(<FanDashboard />);
+    const sosBtn = screen.getByTitle('Emergency Call');
+    fireEvent.click(sosBtn);
+
+    expect(
+      screen.getByText('SOS: Emergency services dispatched to Gate 3.')
+    ).toBeInTheDocument();
+
+    // Close modal
+    const closeBtn = screen.getByRole('button', { name: 'Confirm' });
+    fireEvent.click(closeBtn);
+    expect(
+      screen.queryByText('SOS: Emergency services dispatched to Gate 3.')
+    ).not.toBeInTheDocument();
+  });
+
+  test('Report Issue button click displays custom prompt modal, accepts input, and displays success alert', () => {
+    render(<FanDashboard />);
+    const reportBtn = screen.getByTitle('Report Issue');
+    fireEvent.click(reportBtn);
+
+    expect(
+      screen.getByText('What issue would you like to report?')
+    ).toBeInTheDocument();
+
+    const input = screen.getByPlaceholderText('Type details here...');
+    fireEvent.change(input, { target: { value: 'Broken seat at Gate 7' } });
+
+    // Submit prompt
+    const confirmBtn = screen.getByRole('button', { name: 'Confirm' });
+    fireEvent.click(confirmBtn);
+
+    // Prompt resolves to success alert modal
+    expect(
+      screen.getByText('Thank you for reporting: Broken seat at Gate 7')
+    ).toBeInTheDocument();
+
+    // Dismiss alert modal
+    const okBtn = screen.getByRole('button', { name: 'Confirm' });
+    fireEvent.click(okBtn);
+    expect(
+      screen.queryByText('Thank you for reporting: Broken seat at Gate 7')
+    ).not.toBeInTheDocument();
+  });
+
+  test('Lost & Found button click displays custom alert modal', () => {
+    render(<FanDashboard />);
+    const lostBtn = screen.getByTitle('Lost & Found');
+    fireEvent.click(lostBtn);
+
+    expect(
+      screen.getByText('Lost & Found catalog loaded.')
+    ).toBeInTheDocument();
+  });
 });
